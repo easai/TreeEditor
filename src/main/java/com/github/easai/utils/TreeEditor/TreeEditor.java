@@ -1656,20 +1656,20 @@ public class TreeEditor extends JFrame implements ActionListener, Printable, Mou
 		opt.addOption("?", OPTION_USAGE, true, "print this message");
 		TreeEditor treeEditor = null;
 		try {
-			String iniFile = "";
+			String treFile = "";
 
 			CommandLineParser parser = new DefaultParser();
 			CommandLine cmd = parser.parse(opt, args);
 
 			if (cmd.hasOption(OPTION_FILE)) {
-				iniFile = cmd.getOptionValue(OPTION_FILE);
+				treFile = cmd.getOptionValue(OPTION_FILE);
 			}
 			if (cmd.hasOption(OPTION_USAGE)) {
 				throw new Exception();
 			}
 			
-			TreeEditor.log.info("Tre file specified: "+iniFile);
-			treeEditor = new TreeEditor(iniFile);
+			TreeEditor.log.info("Tre file specified: "+treFile);
+			treeEditor = new TreeEditor(treFile);
 			treeEditor.init();
 		} catch (Exception e) {
 			HelpFormatter help=new HelpFormatter();
