@@ -1,3 +1,11 @@
+#*
+*~
+*.jar
+!lib/*
+bin
+log
+.settings/
+
 # Windows image file caches
 Thumbs.db
 ehthumbs.db
@@ -45,3 +53,10 @@ $RECYCLE.BIN/
 Network Trash Folder
 Temporary Items
 .apdisk
+
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
