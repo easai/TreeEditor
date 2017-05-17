@@ -62,6 +62,11 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Options;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -98,20 +103,7 @@ public class TreeEditor extends JFrame implements ActionListener, Printable, Mou
 	int height;
 	int leftOffset;
 	String orgTree = "";
-	Logger log = LoggerFactory.getLogger(this.getClass());
-
-	/**
-	 * Constructor.
-	 * 
-	 * @param fileName
-	 *            the TRE file
-	 */
-	TreeEditor(String fileName[]) {
-		if (fileName.length > 0) {
-			log.info("Reading file" + fileName);
-			this.fileName = fileName[0];
-		}
-	}
+	static public Logger log = LoggerFactory.getLogger(TreeEditor.class);
 
 	/**
 	 * Constructor.
@@ -122,6 +114,7 @@ public class TreeEditor extends JFrame implements ActionListener, Printable, Mou
 	public TreeEditor(String fileName) {
 		log.info("Reading file" + fileName);
 		this.fileName = fileName;
+		readTreeFile(fileName);
 	}
 
 	/**
@@ -1213,7 +1206,7 @@ public class TreeEditor extends JFrame implements ActionListener, Printable, Mou
 		expandAll();
 	}
 
-	public void saveIfModified(){
+	public void saveIfModified() {
 		String curTree = parseTree();
 		if (!curTree.equals(orgTree)) {
 			int answer = JOptionPane.showConfirmDialog(null,
@@ -1222,9 +1215,9 @@ public class TreeEditor extends JFrame implements ActionListener, Printable, Mou
 			if (answer == JOptionPane.YES_OPTION) {
 				save();
 			}
-		}		
+		}
 	}
-	
+
 	/**
 	 * Opens a FileDialog for TRE file.
 	 */
@@ -1233,15 +1226,24 @@ public class TreeEditor extends JFrame implements ActionListener, Printable, Mou
 		String fn = "";
 		FileDialog fd = new FileDialog(this, "Open", FileDialog.LOAD);
 		fd.setVisible(true);
-
 		if ((fn = fd.getFile()) != null) {
 			fileName = fd.getDirectory() + fn;
-			readTree(top, fd.getDirectory() + fn);
+			readTreeFile(fileName);
 		}
-		treeModel.reload();
-		expandAll();
-		repaint();
-		orgTree = this.parseTree();
+	}
+
+	/**
+	 * @param fileName
+	 *            the TRE file
+	 */
+	public void readTreeFile(String fileName) {
+		readTree(top, fileName);
+		if (treeModel != null) {
+			treeModel.reload();
+			expandAll();
+			repaint();
+			orgTree = this.parseTree();
+		}
 	}
 
 	/**
@@ -1285,18 +1287,18 @@ public class TreeEditor extends JFrame implements ActionListener, Printable, Mou
 	 *            the TRE file
 	 */
 	public void readTree(DefaultMutableTreeNode top, String fileName) {
-		if (fileName == null || fileName.isEmpty() || !(new File(fileName)).exists()) {
-			return;
-		}
-		top.removeAllChildren();
-		setTitle(fileName);
 		StringBuffer buffer = new StringBuffer();
 		DefaultMutableTreeNode node = top, buf;
 		InputStreamReader isr = null;
 		BufferedReader reader = null;
 		FileInputStream fis = null;
 		InputStream is = null;
-		try {
+		try {			
+			if (fileName == null || fileName.isEmpty() || !((new File(fileName)).exists())) {
+				throw new Exception("File not found: "+fileName);
+			}
+			top.removeAllChildren();
+			setTitle(fileName);
 			if (applet != null) {
 				URL url = new URL(applet.getDocumentBase(), fileName);
 				is = url.openConnection().getInputStream();
@@ -1349,8 +1351,8 @@ public class TreeEditor extends JFrame implements ActionListener, Printable, Mou
 				}
 			} while (ch > -1);
 			reader.close();
-		} catch (IOException e) {
-			log.error("", e);
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
 		} finally {
 			try {
 				if (reader != null)
@@ -1362,7 +1364,7 @@ public class TreeEditor extends JFrame implements ActionListener, Printable, Mou
 				else if (fis != null)
 					fis.close();
 			} catch (Exception e) {
-				log.error("", e);
+				log.error("File read error:", e);
 			}
 		}
 	}
@@ -1639,12 +1641,40 @@ public class TreeEditor extends JFrame implements ActionListener, Printable, Mou
 		saveIfModified();
 		dispose();
 	}
+	
+	public void usage(){
+	}
 
 	/**
 	 * @param args
 	 */
 	public static void main(String args[]) {
-		TreeEditor treeEditor = new TreeEditor(args);
-		treeEditor.init();
+		final String OPTION_FILE = "trefile";
+		final String OPTION_USAGE= "usage";
+		Options opt = new Options();
+		opt.addOption("f", OPTION_FILE, true, "the TRE file");
+		opt.addOption("?", OPTION_USAGE, true, "print this message");
+		TreeEditor treeEditor = null;
+		try {
+			String iniFile = "";
+
+			CommandLineParser parser = new DefaultParser();
+			CommandLine cmd = parser.parse(opt, args);
+
+			if (cmd.hasOption(OPTION_FILE)) {
+				iniFile = cmd.getOptionValue(OPTION_FILE);
+			}
+			if (cmd.hasOption(OPTION_USAGE)) {
+				throw new Exception();
+			}
+			
+			TreeEditor.log.info("Tre file specified: "+iniFile);
+			treeEditor = new TreeEditor(iniFile);
+			treeEditor.init();
+		} catch (Exception e) {
+			HelpFormatter help=new HelpFormatter();
+			help.printHelp("TreeEditor", opt);
+			TreeEditor.log.error("Error starting TreeEditor", e);
+		}
 	}
 }
