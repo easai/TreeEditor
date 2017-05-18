@@ -44,6 +44,7 @@
 					</descriptorRefs>
 					<archive>
 						<manifest>
+							<!--  mainClass>${project.groupId}.${project.artifactId}.${project.artifactId}</mainClass -->
 							<mainClass>${project.groupId}.${project.artifactId}.${project.artifactId}</mainClass>
 						</manifest>
 					</archive>

@@ -1019,8 +1019,8 @@ public class TreeEditor extends JFrame implements ActionListener, Printable, Mou
 		case TreeEditorMenu.nFilesSaveasHTML:
 			saveHTML();
 			break;
-		case TreeEditorMenu.nFilesPrintPreview:
-			preview();
+		case TreeEditorMenu.nFilesSaveasXML:
+			saveXML();
 			break;
 		case TreeEditorMenu.nFilesPrintEnglishDocuments:
 			print();
@@ -1428,6 +1428,26 @@ public class TreeEditor extends JFrame implements ActionListener, Printable, Mou
 		return res;
 	}
 
+	public String parseTreeXML(DefaultMutableTreeNode top, int level){
+		String res = "";
+		if (top != null) {
+			String buf = "";
+			DefaultMutableTreeNode buffer;
+			if (!top.isLeaf()) {
+				int i;
+				//buf += "<node>";
+				for (i = 0; i < top.getChildCount(); i++) {
+					buffer = (DefaultMutableTreeNode) top.getChildAt(i);
+					buf += "<node><value>" + ((String) buffer.getUserObject()) + "</value>\n" + parseTreeXML(buffer, level + 1)+"</node>";
+					N++;
+				}
+				//buf += "</node>";
+				return buf;
+			}
+		}
+		return res;		
+	}
+
 	/**
 	 * Saves the tree.
 	 */
@@ -1463,6 +1483,15 @@ public class TreeEditor extends JFrame implements ActionListener, Printable, Mou
 		}
 	}
 
+	private void saveXML(){
+		FileDialog fd = new FileDialog(this, "Save", FileDialog.SAVE);
+		fd.setVisible(true);
+		String fn = "";
+		if ((fn = fd.getFile()) != null) {
+			writeTreeXML(top, fd.getDirectory() + fn);
+		}
+	}
+	
 	/**
 	 * Writes out the tree in TRE format.
 	 * 
@@ -1498,7 +1527,22 @@ public class TreeEditor extends JFrame implements ActionListener, Printable, Mou
 			log.error("File write (HTML) error.", e);
 		}
 	}
+	
+	public void writeTreeXML(DefaultMutableTreeNode top, String fileName) {
+		String buffer;
+		try {
+			buffer = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>";
+			buffer += parseTreeXML(top,0);
+			writeFile(buffer, fileName);
+		} catch (Exception e) {
+			log.error("File write (XML) error.", e);
+		}
+	}
 
+	public void writeTreeXML(String fn){
+		
+	}
+	
 	/**
 	 * @param str
 	 * @param fileName
@@ -1640,9 +1684,6 @@ public class TreeEditor extends JFrame implements ActionListener, Printable, Mou
 	public void quit() {
 		saveIfModified();
 		dispose();
-	}
-	
-	public void usage(){
 	}
 
 	/**

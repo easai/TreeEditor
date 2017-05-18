@@ -19,7 +19,7 @@ public class TreeEditorMenu {
 	JMenu m[];
 	String menus[] = { "Files", "Edit", "View", "Help" };
 	String menuitems[][] = {
-			{ "Open", "Save", "SaveAs", "SaveasHTML", /*"PrintPreview", "PrintEnglishDocuments",*/ "Exit" },
+			{ "Open", "Save", "SaveAs", "SaveasHTML", "SaveasXML", /*"PrintEnglishDocuments",*/ "Exit" },
 			{ "UndoDelete", "Add", "Copy", "AddImage", "ApplyAll", "Delete", "Sort", "SortAll", "Search" },
 			{ "CollapseAll", "ExpandAll", "Collapse", "CollapseNodeatSameLevel", "Refresh", "FontSize" },
 			{ "AboutTreeEditor" } };
@@ -28,7 +28,7 @@ public class TreeEditorMenu {
 	final static int nFilesSave = 1;
 	final static int nFilesSaveAs = 2;
 	final static int nFilesSaveasHTML = 3;
-	final static int nFilesPrintPreview = 4;
+	final static int nFilesSaveasXML = 4;
 	final static int nFilesPrintEnglishDocuments = 5;
 	final static int nFilesExit = 6;
 	final static int nEditUndoDelete = 7;
@@ -49,7 +49,7 @@ public class TreeEditorMenu {
 	final static int nHelpAboutTreeEditor = 22;
 
 	int mi_num[][] = {
-			{ nFilesOpen, nFilesSave, nFilesSaveAs, nFilesSaveasHTML, /* nFilesPrintPreview, nFilesPrintEnglishDocuments,*/
+			{ nFilesOpen, nFilesSave, nFilesSaveAs, nFilesSaveasHTML, nFilesSaveasXML, /*nFilesPrintEnglishDocuments,*/
 					nFilesExit },
 			{ nEditUndoDelete, nEditAdd, nEditCopy, nEditAddImage, nEditApplyAll, nEditDelete, nEditSort, nEditSortAll,
 					nEditSearch },
