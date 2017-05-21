@@ -11,7 +11,7 @@ public class TreeEditorFrame extends JFrame {
 
 	TreeEditorFrame(String treFile){
 		treeEditor=new TreeEditor(treFile);
-		treeEditor.init();
+		
 		init();
 	}
 	

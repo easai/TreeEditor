@@ -143,9 +143,10 @@ public class TreeEditor extends JScrollPane implements ActionListener, Printable
 	 * Initializes the popup menu.
 	 */
 	private void popupInit() {
-		String popupMenu[] = { "Copy" };
-		int popupMenu_num[] = { TreeEditorMenu.nEditCopy };
+		String popupMenu[] = { "Add","Delete","Open","Save","Copy" };
+		int popupMenu_num[] = { TreeEditorMenu.nEditAdd,TreeEditorMenu.nEditDelete,TreeEditorMenu.nFilesOpen,TreeEditorMenu.nFilesSave,TreeEditorMenu.nEditCopy };
 		JMenuItem mi;
+		popup.removeAll();
 		for (int i = 0; i < popupMenu.length; i++) {
 			mi = new JMenuItem(popupMenu[i]);
 			mi.addActionListener(this);
