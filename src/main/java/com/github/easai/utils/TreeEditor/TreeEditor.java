@@ -1,6 +1,8 @@
 package com.github.easai.utils.TreeEditor;
 // TreeEditor.java -- a tree structure data editor 
 
+import java.awt.BorderLayout;
+
 // Erica Asai<easai@acm.org>
 // Time-stamp: <2004-04-14 21:49:06 @easai>
 
@@ -71,7 +73,7 @@ import org.apache.commons.cli.Options;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TreeEditor extends JPanel implements ActionListener, Printable, MouseListener {
+public class TreeEditor extends JScrollPane implements ActionListener, Printable, MouseListener {
 	/**
 	 * 
 	 */
@@ -91,7 +93,6 @@ public class TreeEditor extends JPanel implements ActionListener, Printable, Mou
 	public TreeEditorMenu menu = new TreeEditorMenu();
 	public JTree tree;
 	public DefaultMutableTreeNode top;
-	public JScrollPane scroll;
 
 	Stack<DefaultMutableTreeNode> deletedNodes = new Stack<DefaultMutableTreeNode>();
 	Stack<DefaultMutableTreeNode> deletedNodesFrom = new Stack<DefaultMutableTreeNode>();
@@ -115,7 +116,6 @@ public class TreeEditor extends JPanel implements ActionListener, Printable, Mou
 	public TreeEditor(String fileName) {
 		this.fileName = fileName;
 		init();
-		//readTreeFile(fileName);
 	}
 
 	/**
@@ -858,11 +858,9 @@ public class TreeEditor extends JPanel implements ActionListener, Printable, Mou
 				Object nodeInfo = node.getUserObject();
 			}
 		});
-		scroll = new JScrollPane(tree);
-		removeAll();
-		add(scroll);
-		repaint();
-		scroll.revalidate();
+		
+		getViewport().add(tree);
+		revalidate();
 	}
 
 	/**
@@ -1728,7 +1726,7 @@ public class TreeEditor extends JPanel implements ActionListener, Printable, Mou
 			return;
 
 		// Font font=new Font("monospaced", Font.PLAIN, 16);
-		// FontMetrics fontM=getFontMetrics(font);
+		// FontMetrics fontM=getFontMetrics(font);		
 		FontMetrics fontMetrics = getFontMetrics(getFont());
 		// int width=fontM.charWidth('-');
 		height = fontMetrics.getHeight();

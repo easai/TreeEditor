@@ -1,5 +1,6 @@
 package com.github.easai.utils.TreeEditor;
 
+import java.awt.BorderLayout;
 import java.awt.event.ActionListener;
 import java.util.Locale;
 
@@ -15,7 +16,7 @@ public class TreeEditorFrame extends JFrame {
 	}
 	
 	public void init(){
-		getContentPane().add(treeEditor);
+		getContentPane().add(treeEditor,BorderLayout.CENTER);
 		treeEditor.menu.setMenu(this, (ActionListener) treeEditor, treeEditor.comp, Locale.US);
 		setTitle("TreeEditor");
 		pack();
