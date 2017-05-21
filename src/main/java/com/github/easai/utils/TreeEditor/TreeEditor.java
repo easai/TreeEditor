@@ -51,6 +51,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
@@ -70,7 +71,7 @@ import org.apache.commons.cli.Options;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TreeEditor extends JFrame implements ActionListener, Printable, MouseListener {
+public class TreeEditor extends JPanel implements ActionListener, Printable, MouseListener {
 	/**
 	 * 
 	 */
@@ -91,7 +92,7 @@ public class TreeEditor extends JFrame implements ActionListener, Printable, Mou
 	public JTree tree;
 	public DefaultMutableTreeNode top;
 	public JScrollPane scroll;
-	Container container = getContentPane();
+
 	Stack<DefaultMutableTreeNode> deletedNodes = new Stack<DefaultMutableTreeNode>();
 	Stack<DefaultMutableTreeNode> deletedNodesFrom = new Stack<DefaultMutableTreeNode>();
 	String searchWord = "";
@@ -112,29 +113,24 @@ public class TreeEditor extends JFrame implements ActionListener, Printable, Mou
 	 *            the TRE file
 	 */
 	public TreeEditor(String fileName) {
-		log.info("Reading file" + fileName);
 		this.fileName = fileName;
-		readTreeFile(fileName);
+		init();
+		//readTreeFile(fileName);
 	}
 
 	/**
 	 * Initialization procedure.
 	 */
 	public void init() {
-		setTitle("TreeEditor");
+
 		top = new DefaultMutableTreeNode("top");
 		readTree(top, fileName);
 		setTree(top);
 		expandAll();
-		addWindowListener(new WindowAdapter() {
-			public void windowClosing(WindowEvent e) {
-				quit();
-			}
-		});
-		menu.setMenu(this, (ActionListener) this, comp, Locale.US);
-
-		setSize(400, 900);
-		setVisible(true);
+		/*
+		 * addWindowListener(new WindowAdapter() { public void
+		 * windowClosing(WindowEvent e) { quit(); } });
+		 */
 
 		tree.addMouseListener(this);
 
@@ -160,7 +156,7 @@ public class TreeEditor extends JFrame implements ActionListener, Printable, Mou
 	}
 
 	/**
-	 * 
+	 * Searches the tree.
 	 */
 	public void search() {
 		String word = JOptionPane.showInputDialog("Search: ", searchWord);
@@ -168,7 +164,10 @@ public class TreeEditor extends JFrame implements ActionListener, Printable, Mou
 	}
 
 	/**
+	 * Searches for the specified word.
+	 * 
 	 * @param word
+	 *            the search keyword
 	 */
 	public void search(String word) {
 		if (word == "")
@@ -180,6 +179,7 @@ public class TreeEditor extends JFrame implements ActionListener, Printable, Mou
 	}
 
 	/**
+	 * Removes diacritics for search.
 	 * 
 	 * @param str
 	 * @return
@@ -210,7 +210,10 @@ public class TreeEditor extends JFrame implements ActionListener, Printable, Mou
 	}
 
 	/**
+	 * For search by Roman alphabets
+	 * 
 	 * @param str
+	 *            the String
 	 * @return
 	 */
 	String toKatakana(String str) {
@@ -227,8 +230,11 @@ public class TreeEditor extends JFrame implements ActionListener, Printable, Mou
 	}
 
 	/**
+	 * For internal use.
+	 * 
 	 * @param ch
-	 * @return
+	 *            the character
+	 * @return the offset
 	 */
 	int consonantOffset(char ch) {
 		int offset = 0;
@@ -293,8 +299,11 @@ public class TreeEditor extends JFrame implements ActionListener, Printable, Mou
 	}
 
 	/**
+	 * Roman alphabets -> katakana conversion
+	 * 
 	 * @param str
-	 * @return
+	 *            the String
+	 * @return the converted String
 	 */
 	String latinToKatakana(String str) {
 		int state = 0;
@@ -762,8 +771,12 @@ public class TreeEditor extends JFrame implements ActionListener, Printable, Mou
 	}
 
 	/**
+	 * Searches the tree.
+	 * 
 	 * @param n
+	 *            the tree node
 	 * @param word
+	 *            the search word
 	 */
 	public void search(DefaultMutableTreeNode n, String word) {
 		TreeSelectionModel selectionModel = tree.getSelectionModel();
@@ -802,7 +815,7 @@ public class TreeEditor extends JFrame implements ActionListener, Printable, Mou
 	}
 
 	/**
-	 * 
+	 * Searches the next word in the tree.
 	 */
 	public void searchNext() {
 		int nPaths = pathArray.size();
@@ -825,6 +838,7 @@ public class TreeEditor extends JFrame implements ActionListener, Printable, Mou
 	// deliberately leaving this redundancy of passing top
 	/**
 	 * @param top
+	 *            the top node
 	 */
 	public void setTree(DefaultMutableTreeNode top) {
 		treeModel = new DefaultTreeModel(top);
@@ -845,13 +859,14 @@ public class TreeEditor extends JFrame implements ActionListener, Printable, Mou
 			}
 		});
 		scroll = new JScrollPane(tree);
-		container.add(scroll);
+		removeAll();
+		add(scroll);
 		repaint();
 		scroll.revalidate();
 	}
 
 	/**
-	 * 
+	 * Deletes the specified node.
 	 */
 	private void deleteNode() {
 		DefaultMutableTreeNode node = null, up;
@@ -867,9 +882,8 @@ public class TreeEditor extends JFrame implements ActionListener, Printable, Mou
 		}
 	}
 
-	// fix this
 	/**
-	 * 
+	 * undo
 	 */
 	private void undo() {
 		if (deletedNodes.empty())
@@ -884,7 +898,7 @@ public class TreeEditor extends JFrame implements ActionListener, Printable, Mou
 	}
 
 	/**
-	 * 
+	 * Adds a node.
 	 */
 	private void addNode() {
 		DefaultMutableTreeNode node = null;
@@ -902,7 +916,7 @@ public class TreeEditor extends JFrame implements ActionListener, Printable, Mou
 	}
 
 	/**
-	 * 
+	 * Adds an image.
 	 */
 	private void addImage() {
 		DefaultMutableTreeNode node = null;
@@ -927,7 +941,7 @@ public class TreeEditor extends JFrame implements ActionListener, Printable, Mou
 	}
 
 	/**
-	 * 
+	 * Collapses the node.
 	 */
 	void collapseDepth() {
 		DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
@@ -936,7 +950,7 @@ public class TreeEditor extends JFrame implements ActionListener, Printable, Mou
 	}
 
 	/**
-	 * 
+	 * Collapses the node.
 	 */
 	void collapseNode() {
 		DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
@@ -944,6 +958,8 @@ public class TreeEditor extends JFrame implements ActionListener, Printable, Mou
 	}
 
 	/**
+	 * Collapses the node.
+	 * 
 	 * @param n
 	 */
 	void collapseNode(DefaultMutableTreeNode n) {
@@ -951,6 +967,8 @@ public class TreeEditor extends JFrame implements ActionListener, Printable, Mou
 	}
 
 	/**
+	 * Collapses the node.
+	 * 
 	 * @param depth
 	 */
 	void collapseDepth(int depth) {
@@ -958,8 +976,12 @@ public class TreeEditor extends JFrame implements ActionListener, Printable, Mou
 	}
 
 	/**
+	 * Collapses the node.
+	 * 
 	 * @param n
+	 *            the node
 	 * @param depth
+	 *            the depth
 	 */
 	void collapseNode(DefaultMutableTreeNode n, int depth) {
 		for (Enumeration e = n.postorderEnumeration(); e.hasMoreElements();) {
@@ -973,7 +995,7 @@ public class TreeEditor extends JFrame implements ActionListener, Printable, Mou
 	}
 
 	/**
-	 * 
+	 * Expands all the nodes.
 	 */
 	void expandAll() {
 		int i = 0;
@@ -1078,7 +1100,7 @@ public class TreeEditor extends JFrame implements ActionListener, Printable, Mou
 	}
 
 	/**
-	 * 
+	 * Sorts the selected nodes.
 	 */
 	void sortSelected() {
 		DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
@@ -1086,6 +1108,8 @@ public class TreeEditor extends JFrame implements ActionListener, Printable, Mou
 	}
 
 	/**
+	 * Sorts the nodes.
+	 * 
 	 * @param selectedNode
 	 */
 	void sortNodes(DefaultMutableTreeNode selectedNode) {
@@ -1135,7 +1159,7 @@ public class TreeEditor extends JFrame implements ActionListener, Printable, Mou
 	}
 
 	/**
-	 * 
+	 * Sorts all the nodes.
 	 */
 	void sortAll() {
 		for (Enumeration e = top.postorderEnumeration(); e.hasMoreElements();) {
@@ -1145,14 +1169,17 @@ public class TreeEditor extends JFrame implements ActionListener, Printable, Mou
 	}
 
 	/**
-	 * 
+	 * For applyNode().
 	 */
 	void applyAll() {
 		applyNode(top);
 	}
 
 	/**
+	 * For internal use only.
+	 * 
 	 * @param n
+	 *            the node
 	 */
 	void applyNode(DefaultMutableTreeNode n) {
 		for (Enumeration e = n.postorderEnumeration(); e.hasMoreElements();) {
@@ -1169,7 +1196,7 @@ public class TreeEditor extends JFrame implements ActionListener, Printable, Mou
 	}
 
 	/**
-	 * 
+	 * Copies the leaf.
 	 */
 	public void copyLeaf() {
 		DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
@@ -1184,7 +1211,7 @@ public class TreeEditor extends JFrame implements ActionListener, Printable, Mou
 	}
 
 	/**
-	 * 
+	 * Copies the local leaf.
 	 */
 	public void copyLeafLocal() {
 		DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
@@ -1206,6 +1233,9 @@ public class TreeEditor extends JFrame implements ActionListener, Printable, Mou
 		expandAll();
 	}
 
+	/**
+	 * Saves the tree if it is modified.
+	 */
 	public void saveIfModified() {
 		String curTree = parseTree();
 		if (!curTree.equals(orgTree)) {
@@ -1224,7 +1254,7 @@ public class TreeEditor extends JFrame implements ActionListener, Printable, Mou
 	public void read() {
 		saveIfModified();
 		String fn = "";
-		FileDialog fd = new FileDialog(this, "Open", FileDialog.LOAD);
+		FileDialog fd = new FileDialog((JFrame) null, "Open", FileDialog.LOAD);
 		fd.setVisible(true);
 		if ((fn = fd.getFile()) != null) {
 			fileName = fd.getDirectory() + fn;
@@ -1233,6 +1263,8 @@ public class TreeEditor extends JFrame implements ActionListener, Printable, Mou
 	}
 
 	/**
+	 * Reads the TRE file.
+	 * 
 	 * @param fileName
 	 *            the TRE file
 	 */
@@ -1293,12 +1325,15 @@ public class TreeEditor extends JFrame implements ActionListener, Printable, Mou
 		BufferedReader reader = null;
 		FileInputStream fis = null;
 		InputStream is = null;
-		try {			
+		try {
+			log.info("Reading file: " + fileName);
 			if (fileName == null || fileName.isEmpty() || !((new File(fileName)).exists())) {
-				throw new Exception("File not found: "+fileName);
+				throw new Exception("File not found: " + fileName);
 			}
-			top.removeAllChildren();
-			setTitle(fileName);
+			if (top != null) {
+				top.removeAllChildren();
+			}
+			// setTitle(fileName);
 			if (applet != null) {
 				URL url = new URL(applet.getDocumentBase(), fileName);
 				is = url.openConnection().getInputStream();
@@ -1373,15 +1408,32 @@ public class TreeEditor extends JFrame implements ActionListener, Printable, Mou
 	 * Gets the String representations of the tree.
 	 * 
 	 * @param top
+	 *            the top node
 	 * @param level
+	 *            the level
 	 * @param start
+	 *            the char
 	 * @param endline
+	 *            the new line char
 	 * @return the String representations of the tree.
 	 */
 	private String parseTree() {
 		return parseTree(top, 0, "-", "\n");
 	}
 
+	/**
+	 * Parses the tree.
+	 * 
+	 * @param top
+	 *            the top node
+	 * @param level
+	 *            the level
+	 * @param start
+	 *            the char
+	 * @param endline
+	 *            the new line char
+	 * @return the String representations of the tree.
+	 */
 	private String parseTree(DefaultMutableTreeNode top, int level, String start, String endline) {
 		String res = "";
 		if (top != null) {
@@ -1401,6 +1453,7 @@ public class TreeEditor extends JFrame implements ActionListener, Printable, Mou
 	}
 
 	/**
+	 * Parses the tree.
 	 * 
 	 * @param top
 	 *            the top node of the tree
@@ -1428,24 +1481,34 @@ public class TreeEditor extends JFrame implements ActionListener, Printable, Mou
 		return res;
 	}
 
-	public String parseTreeXML(DefaultMutableTreeNode top, int level){
+	/**
+	 * Parses the tree.
+	 * 
+	 * @param top
+	 *            the top node
+	 * @param level
+	 *            the level
+	 * @return the String representations of the tree.
+	 */
+	public String parseTreeXML(DefaultMutableTreeNode top, int level) {
 		String res = "";
 		if (top != null) {
 			String buf = "";
 			DefaultMutableTreeNode buffer;
 			if (!top.isLeaf()) {
 				int i;
-				//buf += "<node>";
+				// buf += "<node>";
 				for (i = 0; i < top.getChildCount(); i++) {
 					buffer = (DefaultMutableTreeNode) top.getChildAt(i);
-					buf += "<node><value>" + ((String) buffer.getUserObject()) + "</value>\n" + parseTreeXML(buffer, level + 1)+"</node>";
+					buf += "<node><value>" + ((String) buffer.getUserObject()) + "</value>\n"
+							+ parseTreeXML(buffer, level + 1) + "</node>";
 					N++;
 				}
-				//buf += "</node>";
+				// buf += "</node>";
 				return buf;
 			}
 		}
-		return res;		
+		return res;
 	}
 
 	/**
@@ -1463,7 +1526,7 @@ public class TreeEditor extends JFrame implements ActionListener, Printable, Mou
 	 * Prompts for TRE file.
 	 */
 	private void saveAs() {
-		FileDialog fd = new FileDialog(this, "Save", FileDialog.SAVE);
+		FileDialog fd = new FileDialog((JFrame) null, "Save", FileDialog.SAVE);
 		fd.setVisible(true);
 		String fn = "";
 		if ((fn = fd.getFile()) != null) {
@@ -1475,7 +1538,7 @@ public class TreeEditor extends JFrame implements ActionListener, Printable, Mou
 	 * Prompts for HTML file.
 	 */
 	private void saveHTML() {
-		FileDialog fd = new FileDialog(this, "Save", FileDialog.SAVE);
+		FileDialog fd = new FileDialog((JFrame) null, "Save", FileDialog.SAVE);
 		fd.setVisible(true);
 		String fn = "";
 		if ((fn = fd.getFile()) != null) {
@@ -1483,22 +1546,29 @@ public class TreeEditor extends JFrame implements ActionListener, Printable, Mou
 		}
 	}
 
-	private void saveXML(){
-		FileDialog fd = new FileDialog(this, "Save", FileDialog.SAVE);
+	/**
+	 * Prompts for XML output.
+	 */
+	private void saveXML() {
+		FileDialog fd = new FileDialog((JFrame) null, "Save", FileDialog.SAVE);
 		fd.setVisible(true);
 		String fn = "";
 		if ((fn = fd.getFile()) != null) {
 			writeTreeXML(top, fd.getDirectory() + fn);
 		}
 	}
-	
+
 	/**
 	 * Writes out the tree in TRE format.
 	 * 
 	 * @param top
+	 *            the top node
 	 * @param fileName
+	 *            the file
 	 * @param start
+	 *            the char
 	 * @param endline
+	 *            the new line char
 	 */
 	public void writeTree(DefaultMutableTreeNode top, String fileName, String start, String endline) {
 		try {
@@ -1527,26 +1597,35 @@ public class TreeEditor extends JFrame implements ActionListener, Printable, Mou
 			log.error("File write (HTML) error.", e);
 		}
 	}
-	
+
+	/**
+	 * Writes out the tree in XML format.
+	 * 
+	 * @param top
+	 *            the top node
+	 * @param fileName
+	 *            the file
+	 */
 	public void writeTreeXML(DefaultMutableTreeNode top, String fileName) {
 		String buffer;
 		try {
 			buffer = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>";
-			buffer += parseTreeXML(top,0);
+			buffer += parseTreeXML(top, 0);
 			writeFile(buffer, fileName);
 		} catch (Exception e) {
 			log.error("File write (XML) error.", e);
 		}
 	}
 
-	public void writeTreeXML(String fn){
-		
-	}
-	
 	/**
+	 * Writes out the text.
+	 * 
 	 * @param str
+	 *            the text
 	 * @param fileName
+	 *            the file
 	 * @throws Exception
+	 *             exception
 	 */
 	public void writeFile(String str, String fileName) throws Exception {
 		log.info("Saving the tree: " + fileName);
@@ -1573,11 +1652,17 @@ public class TreeEditor extends JFrame implements ActionListener, Printable, Mou
 	}
 
 	/**
+	 * Parses the tree.
+	 * 
 	 * @param top
+	 *            the top node
 	 * @param level
+	 *            the level
 	 * @param g
+	 *            Graphics
 	 * @param h
-	 * @return
+	 *            the height
+	 * @return the height
 	 */
 	private int parsePrintTree(DefaultMutableTreeNode top, int level, Graphics g, int h) {
 		DefaultMutableTreeNode buffer;
@@ -1593,7 +1678,7 @@ public class TreeEditor extends JFrame implements ActionListener, Printable, Mou
 	}
 
 	/**
-	 * 
+	 * Prints out the tree.
 	 */
 	public void print() {
 		PrinterJob job = PrinterJob.getPrinterJob();
@@ -1629,9 +1714,14 @@ public class TreeEditor extends JFrame implements ActionListener, Printable, Mou
 	}
 
 	/**
+	 * Prints out the tree.
+	 * 
 	 * @param top
+	 *            the top node
 	 * @param level
+	 *            the level
 	 * @param g
+	 *            the Graphics object
 	 */
 	public void printTree(DefaultMutableTreeNode top, int level, Graphics g) {
 		if (top == null)
@@ -1683,19 +1773,21 @@ public class TreeEditor extends JFrame implements ActionListener, Printable, Mou
 	 */
 	public void quit() {
 		saveIfModified();
-		dispose();
 	}
 
 	/**
+	 * The program entry point.
+	 * 
 	 * @param args
+	 *            the command line arguments
 	 */
 	public static void main(String args[]) {
 		final String OPTION_FILE = "trefile";
-		final String OPTION_USAGE= "usage";
+		final String OPTION_USAGE = "usage";
 		Options opt = new Options();
 		opt.addOption("f", OPTION_FILE, true, "the TRE file");
-		opt.addOption("?", OPTION_USAGE, true, "print this message");
-		TreeEditor treeEditor = null;
+		opt.addOption("?", OPTION_USAGE, false, "print this message");
+
 		try {
 			String treFile = "";
 
@@ -1708,14 +1800,13 @@ public class TreeEditor extends JFrame implements ActionListener, Printable, Mou
 			if (cmd.hasOption(OPTION_USAGE)) {
 				throw new Exception();
 			}
-			
-			TreeEditor.log.info("Tre file specified: "+treFile);
-			treeEditor = new TreeEditor(treFile);
-			treeEditor.init();
+
+			TreeEditor.log.info("TRE file specified: " + treFile);
+			new TreeEditorFrame(treFile);
 		} catch (Exception e) {
-			HelpFormatter help=new HelpFormatter();
+			HelpFormatter help = new HelpFormatter();
 			help.printHelp("TreeEditor", opt);
-			TreeEditor.log.error("Error starting TreeEditor", e);
+			TreeEditor.log.error("Error starting TreeEditor:", e);
 		}
 	}
 }
