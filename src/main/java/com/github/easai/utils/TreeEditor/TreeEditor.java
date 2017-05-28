@@ -50,6 +50,7 @@ import java.util.Stack;
 
 import javax.swing.JApplet;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -57,6 +58,7 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
+import javax.swing.TransferHandler;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -109,6 +111,13 @@ public class TreeEditor extends JScrollPane implements ActionListener, Printable
 
 	/**
 	 * Constructor.
+	 */
+	public TreeEditor() {
+		init();
+	}
+
+	/**
+	 * Constructor.
 	 * 
 	 * @param fileName
 	 *            the TRE file
@@ -132,8 +141,76 @@ public class TreeEditor extends JScrollPane implements ActionListener, Printable
 		 * windowClosing(WindowEvent e) { quit(); } });
 		 */
 
+		TreeTransferHandler handler=new TreeTransferHandler();
 		tree.addMouseListener(this);
+		tree.setDragEnabled(true);
+		tree.setTransferHandler(handler);
+		/*
+		tree.setTransferHandler(new TransferHandler() {
 
+			private static final long serialVersionUID = 1L;
+
+			public int getSourceActions(JComponent c) {
+				return COPY_OR_MOVE;
+			}
+
+			protected Transferable createTransferable(JComponent c) {
+				DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
+				String res = "";
+				if (selectedNode != null) {
+					String leaf = (String) selectedNode.getUserObject();
+					res = leaf;
+				}
+				return new StringSelection(res);
+			}
+
+			public boolean canImport(TransferSupport supp) {
+				return true;
+			}
+
+			public boolean importData(TransferHandler.TransferSupport info) {
+				if (!info.isDrop()) {
+					return false;
+				}
+
+				// retrieve what is selected
+				Transferable t = info.getTransferable();
+				String data;
+				try {
+					data = (String) t.getTransferData(DataFlavor.stringFlavor);
+				} catch (Exception e) {
+					return false;
+				}
+
+				// get location
+				JTree.DropLocation dl = (JTree.DropLocation) info.getDropLocation();
+				TreePath path = dl.getPath();
+				
+				// get the node
+				DefaultMutableTreeNode node = null;
+				if (path == null) {
+					node = top;
+				} else {
+					node = (DefaultMutableTreeNode) (path.getLastPathComponent());
+				}
+
+				DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(data);
+								
+				treeModel.insertNodeInto(newNode, node, node.getChildCount());
+	
+				return true;
+			}
+			
+			protected void exportDone(JComponent c, Transferable data, int action) {
+		        JTree tree=(JTree)c;
+		        DefaultTreeModel model=(DefaultTreeModel)tree.getModel();
+		        if (action == TransferHandler.MOVE) {		        	
+		        	treeModel.removeNodeFromParent(node);
+		        }
+		        
+		    }
+		});
+*/
 		popupInit();
 
 		log.info("TreeEditor started");
@@ -143,8 +220,9 @@ public class TreeEditor extends JScrollPane implements ActionListener, Printable
 	 * Initializes the popup menu.
 	 */
 	private void popupInit() {
-		String popupMenu[] = { "Add","Delete","Open","Save","Copy" };
-		int popupMenu_num[] = { TreeEditorMenu.nEditAdd,TreeEditorMenu.nEditDelete,TreeEditorMenu.nFilesOpen,TreeEditorMenu.nFilesSave,TreeEditorMenu.nEditCopy };
+		String popupMenu[] = { "Add", "Delete", "Open", "Save", "SaveAs", "Copy" };
+		int popupMenu_num[] = { TreeEditorMenu.nEditAdd, TreeEditorMenu.nEditDelete, TreeEditorMenu.nFilesOpen,
+				TreeEditorMenu.nFilesSave, TreeEditorMenu.nFilesSaveAs, TreeEditorMenu.nEditCopy };
 		JMenuItem mi;
 		popup.removeAll();
 		for (int i = 0; i < popupMenu.length; i++) {
@@ -859,7 +937,7 @@ public class TreeEditor extends JScrollPane implements ActionListener, Printable
 				Object nodeInfo = node.getUserObject();
 			}
 		});
-		
+
 		getViewport().add(tree);
 		revalidate();
 	}
@@ -867,7 +945,7 @@ public class TreeEditor extends JScrollPane implements ActionListener, Printable
 	/**
 	 * Deletes the specified node.
 	 */
-	private void deleteNode() {
+	public void deleteNode() {
 		DefaultMutableTreeNode node = null, up;
 		TreePath path = tree.getSelectionPath();
 		if (path != null) {
@@ -899,7 +977,7 @@ public class TreeEditor extends JScrollPane implements ActionListener, Printable
 	/**
 	 * Adds a node.
 	 */
-	private void addNode() {
+	public void addNode() {
 		DefaultMutableTreeNode node = null;
 		TreePath path = tree.getSelectionPath();
 		if (path == null) {
@@ -935,14 +1013,14 @@ public class TreeEditor extends JScrollPane implements ActionListener, Printable
 	/**
 	 * Collapses all nodes.
 	 */
-	void collapseAll() {
+	public void collapseAll() {
 		collapseNode(top);
 	}
 
 	/**
 	 * Collapses the node.
 	 */
-	void collapseDepth() {
+	public void collapseDepth() {
 		DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
 		TreeNode list[] = node.getPath();
 		collapseNode(top, list.length);
@@ -951,7 +1029,7 @@ public class TreeEditor extends JScrollPane implements ActionListener, Printable
 	/**
 	 * Collapses the node.
 	 */
-	void collapseNode() {
+	public void collapseNode() {
 		DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
 		collapseNode(selectedNode);
 	}
@@ -996,7 +1074,7 @@ public class TreeEditor extends JScrollPane implements ActionListener, Printable
 	/**
 	 * Expands all the nodes.
 	 */
-	void expandAll() {
+	public void expandAll() {
 		int i = 0;
 		int newHeight = 0;
 		for (Enumeration e = top.depthFirstEnumeration(); e.hasMoreElements(); e.nextElement()) {
@@ -1524,7 +1602,7 @@ public class TreeEditor extends JScrollPane implements ActionListener, Printable
 	/**
 	 * Prompts for TRE file.
 	 */
-	private void saveAs() {
+	public void saveAs() {
 		FileDialog fd = new FileDialog((JFrame) null, "Save", FileDialog.SAVE);
 		fd.setVisible(true);
 		String fn = "";
@@ -1727,7 +1805,7 @@ public class TreeEditor extends JScrollPane implements ActionListener, Printable
 			return;
 
 		// Font font=new Font("monospaced", Font.PLAIN, 16);
-		// FontMetrics fontM=getFontMetrics(font);		
+		// FontMetrics fontM=getFontMetrics(font);
 		FontMetrics fontMetrics = getFontMetrics(getFont());
 		// int width=fontM.charWidth('-');
 		height = fontMetrics.getHeight();
