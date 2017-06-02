@@ -141,76 +141,11 @@ public class TreeEditor extends JScrollPane implements ActionListener, Printable
 		 * windowClosing(WindowEvent e) { quit(); } });
 		 */
 
-		TreeTransferHandler handler=new TreeTransferHandler();
 		tree.addMouseListener(this);
 		tree.setDragEnabled(true);
+		TreeTransferHandler handler = new TreeTransferHandler();
 		tree.setTransferHandler(handler);
-		/*
-		tree.setTransferHandler(new TransferHandler() {
 
-			private static final long serialVersionUID = 1L;
-
-			public int getSourceActions(JComponent c) {
-				return COPY_OR_MOVE;
-			}
-
-			protected Transferable createTransferable(JComponent c) {
-				DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
-				String res = "";
-				if (selectedNode != null) {
-					String leaf = (String) selectedNode.getUserObject();
-					res = leaf;
-				}
-				return new StringSelection(res);
-			}
-
-			public boolean canImport(TransferSupport supp) {
-				return true;
-			}
-
-			public boolean importData(TransferHandler.TransferSupport info) {
-				if (!info.isDrop()) {
-					return false;
-				}
-
-				// retrieve what is selected
-				Transferable t = info.getTransferable();
-				String data;
-				try {
-					data = (String) t.getTransferData(DataFlavor.stringFlavor);
-				} catch (Exception e) {
-					return false;
-				}
-
-				// get location
-				JTree.DropLocation dl = (JTree.DropLocation) info.getDropLocation();
-				TreePath path = dl.getPath();
-				
-				// get the node
-				DefaultMutableTreeNode node = null;
-				if (path == null) {
-					node = top;
-				} else {
-					node = (DefaultMutableTreeNode) (path.getLastPathComponent());
-				}
-
-				DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(data);
-								
-				treeModel.insertNodeInto(newNode, node, node.getChildCount());
-	
-				return true;
-			}
-			
-			protected void exportDone(JComponent c, Transferable data, int action) {
-		        JTree tree=(JTree)c;
-		        DefaultTreeModel model=(DefaultTreeModel)tree.getModel();
-		        if (action == TransferHandler.MOVE) {		        	
-		        	treeModel.removeNodeFromParent(node);
-		        }
-		        
-		    }
-		});
-*/
 		popupInit();
 
 		log.info("TreeEditor started");
@@ -946,12 +881,9 @@ public class TreeEditor extends JScrollPane implements ActionListener, Printable
 	 * Deletes the specified node.
 	 */
 	public void deleteNode() {
-		DefaultMutableTreeNode node = null, up;
-		TreePath path = tree.getSelectionPath();
-		if (path != null) {
-			node = (DefaultMutableTreeNode) (path.getLastPathComponent());
-
-			up = (DefaultMutableTreeNode) node.getParent();
+		DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
+		if (node != null) {
+			DefaultMutableTreeNode up = (DefaultMutableTreeNode) node.getParent();
 			deletedNodes.push(node);
 			deletedNodesFrom.push(up);
 			treeModel.removeNodeFromParent(node);
@@ -978,12 +910,10 @@ public class TreeEditor extends JScrollPane implements ActionListener, Printable
 	 * Adds a node.
 	 */
 	public void addNode() {
-		DefaultMutableTreeNode node = null;
+		DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
 		TreePath path = tree.getSelectionPath();
 		if (path == null) {
 			node = top;
-		} else {
-			node = (DefaultMutableTreeNode) (path.getLastPathComponent());
 		}
 		DefaultMutableTreeNode newNode = new DefaultMutableTreeNode((newNodeSuffix++) + " ");
 		// newNode.addMouseListener(this);
@@ -1521,8 +1451,13 @@ public class TreeEditor extends JScrollPane implements ActionListener, Printable
 			if (!top.isLeaf()) {
 				for (int i = 0; i < top.getChildCount(); i++) {
 					buffer = (DefaultMutableTreeNode) top.getChildAt(i);
-					res += prefix + ((String) buffer.getUserObject()) + endline
-							+ parseTree(buffer, level + 1, start, endline);
+					Object obj = buffer.getUserObject();
+					if (obj.getClass() == String.class) {
+						res += prefix + ((String) obj) + endline;
+					} else if (obj.getClass() == DefaultMutableTreeNode.class) {
+						res += prefix + ((String) obj.toString()) + endline;
+					}
+					res += parseTree(buffer, level + 1, start, endline);
 				}
 			}
 		}

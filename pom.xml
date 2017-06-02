@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.github.easai.utils</groupId>
 	<artifactId>TreeEditor</artifactId>
-	<version>0.1.1</version>
+	<version>0.1.7</version>
 	<name>${product.artifactId}</name>
 	<url>https://github.com/easai/${product.artifactId}</url>
 	<description>TreeEditor is a tree structure data editor.</description>

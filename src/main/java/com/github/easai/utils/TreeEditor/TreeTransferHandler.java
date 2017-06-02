@@ -14,10 +14,18 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class TreeTransferHandler extends TransferHandler {
-    DataFlavor nodesFlavor;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	DataFlavor nodesFlavor;
     DataFlavor[] flavors = new DataFlavor[1];
     DefaultMutableTreeNode[] nodesToRemove;
+	static public Logger log = LoggerFactory.getLogger(TreeTransferHandler.class);
 
     public TreeTransferHandler() {
         try {
@@ -28,7 +36,7 @@ public class TreeTransferHandler extends TransferHandler {
             nodesFlavor = new DataFlavor(mimeType);
             flavors[0] = nodesFlavor;
         } catch(ClassNotFoundException e) {
-            System.out.println("ClassNotFound: " + e.getMessage());
+            log.error("ClassNotFound: " + e);
         }
     }
 
@@ -36,30 +44,38 @@ public class TreeTransferHandler extends TransferHandler {
         if(!support.isDrop()) {
             return false;
         }
+        
         support.setShowDropLocation(true);
         if(!support.isDataFlavorSupported(nodesFlavor)) {
             return false;
-        }
-        
+        }        
+        /*
         // Do not allow a drop on the drag source selections.
         JTree.DropLocation dl =
                 (JTree.DropLocation)support.getDropLocation();
+        
         JTree tree = (JTree)support.getComponent();
+
         int dropRow = tree.getRowForPath(dl.getPath());
         int[] selRows = tree.getSelectionRows();
+
         for(int i = 0; i < selRows.length; i++) {
             if(selRows[i] == dropRow) {
                 return false;
             }
         }
+        */
+        /*
         // Do not allow MOVE-action drops if a non-leaf node is
         // selected unless all of its children are also selected.
         int action = support.getDropAction();
         if(action == MOVE) {
             return haveCompleteNode(tree);
         }
+        */
         // Do not allow a non-leaf node to be copied to a level
         // which is less than its source level.
+        /*
         TreePath dest = dl.getPath();
         DefaultMutableTreeNode target =
             (DefaultMutableTreeNode)dest.getLastPathComponent();
@@ -69,10 +85,11 @@ public class TreeTransferHandler extends TransferHandler {
         if(firstNode.getChildCount() > 0 &&
                target.getLevel() < firstNode.getLevel()) {
             return false;
-        }
+        }*/
+        
         return true;
     }
-
+/*
     private boolean haveCompleteNode(JTree tree) {
         int[] selRows = tree.getSelectionRows();
         TreePath path = tree.getPathForRow(selRows[0]);
@@ -97,7 +114,7 @@ public class TreeTransferHandler extends TransferHandler {
         }
         return true;
     }
-
+*/
     protected Transferable createTransferable(JComponent c) {
         JTree tree = (JTree)c;
         TreePath[] paths = tree.getSelectionPaths();
@@ -167,27 +184,45 @@ public class TreeTransferHandler extends TransferHandler {
             Transferable t = support.getTransferable();
             nodes = (DefaultMutableTreeNode[])t.getTransferData(nodesFlavor);
         } catch(UnsupportedFlavorException ufe) {
-            System.out.println("UnsupportedFlavor: " + ufe.getMessage());
+            log.error("UnsupportedFlavor: ", ufe);
         } catch(java.io.IOException ioe) {
-            System.out.println("I/O error: " + ioe.getMessage());
+            log.error("I/O error: ", ioe);
         }
         // Get drop location info.
         JTree.DropLocation dl =
                 (JTree.DropLocation)support.getDropLocation();
-        int childIndex = dl.getChildIndex();
+        int subIndex = dl.getChildIndex();
         TreePath dest = dl.getPath();
         DefaultMutableTreeNode parent =
             (DefaultMutableTreeNode)dest.getLastPathComponent();
         JTree tree = (JTree)support.getComponent();
         DefaultTreeModel model = (DefaultTreeModel)tree.getModel();
         // Configure for drop mode.
-        int index = childIndex;    // DropMode.INSERT
-        if(childIndex == -1) {     // DropMode.ON
+        int index = subIndex;    // DropMode.INSERT
+        if(subIndex == -1) {     // DropMode.ON
             index = parent.getChildCount();
         }
+                        
         // Add data to model.
         for(int i = 0; i < nodes.length; i++) {
-            model.insertNodeInto(nodes[i], parent, index++);
+        	
+        	int parentLevel=parent.getLevel();
+        	int level=0;        	
+        	
+        	if(0<nodesToRemove.length){
+        		level=nodesToRemove[0].getLevel();
+        	}        	
+        	
+        	if(parentLevel==level){
+        		// reorder
+        		DefaultMutableTreeNode up=(DefaultMutableTreeNode)parent.getParent();
+        		if(up!=null){
+        			model.insertNodeInto(nodes[i], up, index++);
+        		}
+        		
+        	}else if(parentLevel<level){        	
+        		model.insertNodeInto(nodes[i], parent, index++);
+        	}
         }
         return true;
     }

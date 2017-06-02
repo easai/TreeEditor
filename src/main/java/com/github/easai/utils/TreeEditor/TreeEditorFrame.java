@@ -7,6 +7,10 @@ import java.util.Locale;
 import javax.swing.JFrame;
 
 public class TreeEditorFrame extends JFrame {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	TreeEditor treeEditor=null;
 
 	TreeEditorFrame(String treFile){
