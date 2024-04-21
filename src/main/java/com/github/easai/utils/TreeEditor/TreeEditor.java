@@ -120,7 +120,7 @@ public class TreeEditor extends JScrollPane implements ActionListener, Printable
 	 * Constructor.
 	 * 
 	 * @param fileName
-	 *            the TRE file
+	 *                 the TRE file
 	 */
 	public TreeEditor(String fileName) {
 		this.fileName = fileName;
@@ -181,7 +181,7 @@ public class TreeEditor extends JScrollPane implements ActionListener, Printable
 	 * Searches for the specified word.
 	 * 
 	 * @param word
-	 *            the search keyword
+	 *             the search keyword
 	 */
 	public void search(String word) {
 		if (word == "")
@@ -247,66 +247,66 @@ public class TreeEditor extends JScrollPane implements ActionListener, Printable
 	 * For internal use.
 	 * 
 	 * @param ch
-	 *            the character
+	 *           the character
 	 * @return the offset
 	 */
 	int consonantOffset(char ch) {
 		int offset = 0;
 		switch (ch) {
-		case 'k':
-			offset = 0x30ab;
-			break;
-		case 'g':
-			offset = 0x30ac;
-			break;
+			case 'k':
+				offset = 0x30ab;
+				break;
+			case 'g':
+				offset = 0x30ac;
+				break;
 
-		case 's':
-			offset = 0x30b5;
-			break;
-		case 'z':
-			offset = 0x30b6;
-			break;
+			case 's':
+				offset = 0x30b5;
+				break;
+			case 'z':
+				offset = 0x30b6;
+				break;
 
-		case 't':
-			offset = 0x30bf;
-			break;
-		case 'd':
-			offset = 0x30c0;
-			break;
+			case 't':
+				offset = 0x30bf;
+				break;
+			case 'd':
+				offset = 0x30c0;
+				break;
 
-		case 'n':
-			offset = 0x30ca;
-			break;
+			case 'n':
+				offset = 0x30ca;
+				break;
 
-		case 'h':
-			offset = 0x30cf;
-			break;
-		case 'b':
-			offset = 0x30d0;
-			break;
-		case 'p':
-			offset = 0x30d1;
-			break;
+			case 'h':
+				offset = 0x30cf;
+				break;
+			case 'b':
+				offset = 0x30d0;
+				break;
+			case 'p':
+				offset = 0x30d1;
+				break;
 
-		case 'm':
-			offset = 0x30de;
-			break;
+			case 'm':
+				offset = 0x30de;
+				break;
 
-		case 'y':
-			offset = 0x30e4;
-			break;
+			case 'y':
+				offset = 0x30e4;
+				break;
 
-		case 'r':
-			offset = 0x30e9;
-			break;
+			case 'r':
+				offset = 0x30e9;
+				break;
 
-		case 'w':
-			offset = 0x30ef;
-			break;
+			case 'w':
+				offset = 0x30ef;
+				break;
 
-		case 'l':
-			offset = 0x30a1;
-			break;
+			case 'l':
+				offset = 0x30a1;
+				break;
 
 		}
 		return offset;
@@ -330,165 +330,292 @@ public class TreeEditor extends JScrollPane implements ActionListener, Printable
 			char ch = str.charAt(i);
 			vowelOffset = 0;
 			switch (state) {
-			case 0:
-				switch (ch) {
-				case 'a':
-					katakana += (char) 0x30a2;
-					break;
-				case 'i':
-					katakana += (char) 0x30a4;
-					break;
-				case 'u':
-					katakana += (char) 0x30a6;
-					break;
-				case 'e':
-					katakana += (char) 0x30a8;
-					break;
-				case 'o':
-					katakana += (char) 0x30aa;
-					break;
-				case '-':
-					katakana += (char) 0x30fc;
-					break;
-
-				case 'k':
-				case 'g':
-				case 's':
-				case 'z':
-				case 't':
-				case 'd':
-				case 'h':
-				case 'b':
-				case 'p':
-				case 'm':
-				case 'y':
-				case 'r':
-				case 'w':
-				case 'l':
-				case 'f':
-					offset = consonantOffset(ch);
-					state = 1;
-					break;
-
-				case 'j':
-					state = 5;
-					break;
-				case 'n':
-					state = 4;
-					break;
-				case 'c':
-					state = 6;
-					break;
-
-				default:
-					katakana += ch;
-					break;
-				}
-				break;
-			case 1:
-				switch (ch) {
-				case 'a':
-				case 'i':
-				case 'u':
-				case 'e':
-				case 'o':
-					if (prev == 'n' || prev == 'm' || prev == 'r') {
-						switch (ch) {
+				case 0:
+					switch (ch) {
 						case 'a':
+							katakana += (char) 0x30a2;
 							break;
 						case 'i':
-							vowelOffset = 1;
+							katakana += (char) 0x30a4;
 							break;
 						case 'u':
-							vowelOffset = 2;
-							break;
-						case 'e':
-							vowelOffset = 3;
-							break;
-						case 'o':
-							vowelOffset = 4;
-							break;
-						}
-						katakana += (char) (offset + vowelOffset);
-					} else if (prev == 'h' || prev == 'b' || prev == 'p') {
-						switch (ch) {
-						case 'a':
-							break;
-						case 'i':
-							vowelOffset = 3;
-							break;
-						case 'u':
-							vowelOffset = 6;
-							break;
-						case 'e':
-							vowelOffset = 9;
-							break;
-						case 'o':
-							vowelOffset = 12;
-							break;
-						}
-						katakana += (char) (offset + vowelOffset);
-					} else if (prev == 'y') {
-						switch (ch) {
-						case 'a':
-							break;
-						case 'u':
-							vowelOffset = 2;
-							break;
-						case 'o':
-							vowelOffset = 4;
-							break;
-						}
-						katakana += (char) (offset + vowelOffset);
-					} else if (prev == 't' || prev == 'd') {
-						switch (ch) {
-						case 'a':
-							break;
-						case 'i':
-							vowelOffset = 2;
-							break;
-						case 'u':
-							vowelOffset = 5;
-							break;
-						case 'e':
-							vowelOffset = 7;
-							break;
-						case 'o':
-							vowelOffset = 9;
-							break;
-						}
-						katakana += (char) (offset + vowelOffset);
-					} else if (prev == 'w') {
-						switch (ch) {
-						case 'a':
-							katakana += (char) 0x30ef;
-							break;
-						case 'i':
 							katakana += (char) 0x30a6;
+							break;
+						case 'e':
+							katakana += (char) 0x30a8;
+							break;
+						case 'o':
+							katakana += (char) 0x30aa;
+							break;
+						case '-':
+							katakana += (char) 0x30fc;
+							break;
+
+						case 'k':
+						case 'g':
+						case 's':
+						case 'z':
+						case 't':
+						case 'd':
+						case 'h':
+						case 'b':
+						case 'p':
+						case 'm':
+						case 'y':
+						case 'r':
+						case 'w':
+						case 'l':
+						case 'f':
+							offset = consonantOffset(ch);
+							state = 1;
+							break;
+
+						case 'j':
+							state = 5;
+							break;
+						case 'n':
+							state = 4;
+							break;
+						case 'c':
+							state = 6;
+							break;
+
+						default:
+							katakana += ch;
+							break;
+					}
+					break;
+				case 1:
+					switch (ch) {
+						case 'a':
+						case 'i':
+						case 'u':
+						case 'e':
+						case 'o':
+							if (prev == 'n' || prev == 'm' || prev == 'r') {
+								switch (ch) {
+									case 'a':
+										break;
+									case 'i':
+										vowelOffset = 1;
+										break;
+									case 'u':
+										vowelOffset = 2;
+										break;
+									case 'e':
+										vowelOffset = 3;
+										break;
+									case 'o':
+										vowelOffset = 4;
+										break;
+								}
+								katakana += (char) (offset + vowelOffset);
+							} else if (prev == 'h' || prev == 'b' || prev == 'p') {
+								switch (ch) {
+									case 'a':
+										break;
+									case 'i':
+										vowelOffset = 3;
+										break;
+									case 'u':
+										vowelOffset = 6;
+										break;
+									case 'e':
+										vowelOffset = 9;
+										break;
+									case 'o':
+										vowelOffset = 12;
+										break;
+								}
+								katakana += (char) (offset + vowelOffset);
+							} else if (prev == 'y') {
+								switch (ch) {
+									case 'a':
+										break;
+									case 'u':
+										vowelOffset = 2;
+										break;
+									case 'o':
+										vowelOffset = 4;
+										break;
+								}
+								katakana += (char) (offset + vowelOffset);
+							} else if (prev == 't' || prev == 'd') {
+								switch (ch) {
+									case 'a':
+										break;
+									case 'i':
+										vowelOffset = 2;
+										break;
+									case 'u':
+										vowelOffset = 5;
+										break;
+									case 'e':
+										vowelOffset = 7;
+										break;
+									case 'o':
+										vowelOffset = 9;
+										break;
+								}
+								katakana += (char) (offset + vowelOffset);
+							} else if (prev == 'w') {
+								switch (ch) {
+									case 'a':
+										katakana += (char) 0x30ef;
+										break;
+									case 'i':
+										katakana += (char) 0x30a6;
+										katakana += (char) 0x30a3;
+										break;
+									case 'u':
+										katakana += (char) 0x30a6;
+										break;
+									case 'e':
+										katakana += (char) 0x30a6;
+										katakana += (char) 0x30a7;
+										break;
+									case 'o':
+										katakana += (char) 0x30f2;
+										break;
+								}
+							} else if (prev == 'f') {
+								katakana += (char) 0x30d5;
+								switch (ch) {
+									case 'a':
+										katakana += (char) 0x30a1;
+										break;
+									case 'i':
+										katakana += (char) 0x30a3;
+										break;
+									case 'u':
+										katakana += (char) 0x30a5;
+										break;
+									case 'e':
+										katakana += (char) 0x30a7;
+										break;
+									case 'o':
+										katakana += (char) 0x30a9;
+										break;
+								}
+							} else {
+								switch (ch) {
+									case 'a':
+										break;
+									case 'i':
+										vowelOffset = 2;
+										break;
+									case 'u':
+										vowelOffset = 4;
+										break;
+									case 'e':
+										vowelOffset = 6;
+										break;
+									case 'o':
+										vowelOffset = 8;
+										break;
+								}
+								katakana += (char) (offset + vowelOffset);
+							}
+							offset = 0;
+							state = 0;
+							break;
+						case 'h':
+							if (prev == 's') {
+								state = 5;
+							} else if (prev == 't') {
+								katakana += (char) 0x30c6;
+								state = 7;
+							} else if (prev == 'd') {
+								katakana += (char) 0x30c7;
+								state = 7;
+							} else if (prev == ch) {
+								katakana += (char) 0x30c3;
+							} else {
+								state = 0;
+							}
+							break;
+						case 's':
+							if (prev == 't') {
+								state = 3;
+							} else if (prev == ch) {
+								katakana += (char) 0x30c3;
+							}
+							break;
+						case 'y':
+							if (prev == ch) {
+								katakana += (char) 0x30c3;
+							} else {
+								if (prev == 'n' || prev == 'm' || prev == 'r') {
+									vowelOffset = 1;
+								} else if (prev == 'h' || prev == 'b' || prev == 'p') {
+									vowelOffset = 3;
+								} else if (prev == 't' || prev == 'd') {
+									vowelOffset = 2;
+								} else if (prev == 'w') {
+									offset = 0x30a2;
+									vowelOffset = 4;
+								} else {
+									vowelOffset = 2;
+								}
+								katakana += (char) (offset + vowelOffset);
+								state = 7;
+							}
+							break;
+						default:
+							if (prev == ch) {
+								katakana += (char) 0x30c3;
+							} else {
+								katakana += ch;
+								state = 0;
+							}
+							break;
+					}
+					break;
+				case 2:
+					switch (ch) {
+						case 'a':
+							katakana += (char) 0x30e3;
+							break;
+						case 'i':
 							katakana += (char) 0x30a3;
 							break;
 						case 'u':
-							katakana += (char) 0x30a6;
+							katakana += (char) 0x30e5;
 							break;
 						case 'e':
-							katakana += (char) 0x30a6;
 							katakana += (char) 0x30a7;
 							break;
 						case 'o':
-							katakana += (char) 0x30f2;
+							katakana += (char) 0x30e7;
 							break;
-						}
-					} else if (prev == 'f') {
-						katakana += (char) 0x30d5;
-						switch (ch) {
+						case 'y':
+							katakana += (char) 0x30b7;
+							state = 7;
+							break;
+						default:
+							katakana += ch;
+							state = 0;
+							break;
+					}
+					break;
+				case 3:
+					switch (ch) {
+						case 'a':
+						case 'i':
+						case 'u':
+						case 'e':
+						case 'o':
+							katakana += (char) 0x30c4;
+							break;
+						default:
+							katakana += ch;
+					}
+					switch (ch) {
 						case 'a':
 							katakana += (char) 0x30a1;
 							break;
 						case 'i':
 							katakana += (char) 0x30a3;
-							break;
-						case 'u':
-							katakana += (char) 0x30a5;
 							break;
 						case 'e':
 							katakana += (char) 0x30a7;
@@ -496,283 +623,156 @@ public class TreeEditor extends JScrollPane implements ActionListener, Printable
 						case 'o':
 							katakana += (char) 0x30a9;
 							break;
-						}
-					} else {
-						switch (ch) {
+					}
+					state = 0;
+					break;
+				case 4:
+					switch (ch) {
+						case 'n':
+							katakana += (char) 0x30f3;
+							break;
 						case 'a':
+							katakana += (char) 0x30ca;
+							state = 0;
 							break;
 						case 'i':
-							vowelOffset = 2;
+							katakana += (char) 0x30cb;
+							state = 0;
 							break;
 						case 'u':
-							vowelOffset = 4;
+							katakana += (char) 0x30cc;
+							state = 0;
 							break;
 						case 'e':
-							vowelOffset = 6;
+							katakana += (char) 0x30cd;
+							state = 0;
 							break;
 						case 'o':
-							vowelOffset = 8;
+							katakana += (char) 0x30ce;
+							state = 0;
 							break;
-						}
-						katakana += (char) (offset + vowelOffset);
-					}
-					offset = 0;
-					state = 0;
-					break;
-				case 'h':
-					if (prev == 's') {
-						state = 5;
-					} else if (prev == 't') {
-						katakana += (char) 0x30c6;
-						state = 7;
-					} else if (prev == 'd') {
-						katakana += (char) 0x30c7;
-						state = 7;
-					} else if (prev == ch) {
-						katakana += (char) 0x30c3;
-					} else {
-						state = 0;
-					}
-					break;
-				case 's':
-					if (prev == 't') {
-						state = 3;
-					} else if (prev == ch) {
-						katakana += (char) 0x30c3;
+						case 'y':
+							katakana += (char) 0x30cb;
+							state = 7;
+							break;
+						default:
+							katakana += (char) 0x30f3;
+							offset = consonantOffset(ch);
+							switch (ch) {
+								case 'j':
+									state = 5;
+									break;
+								case 'c':
+									state = 6;
+									break;
+								default:
+									state = 1;
+									break;
+							}
+							break;
 					}
 					break;
-				case 'y':
-					if (prev == ch) {
-						katakana += (char) 0x30c3;
-					} else {
-						if (prev == 'n' || prev == 'm' || prev == 'r') {
-							vowelOffset = 1;
-						} else if (prev == 'h' || prev == 'b' || prev == 'p') {
-							vowelOffset = 3;
-						} else if (prev == 't' || prev == 'd') {
-							vowelOffset = 2;
-						} else if (prev == 'w') {
-							offset = 0x30a2;
-							vowelOffset = 4;
-						} else {
-							vowelOffset = 2;
-						}
-						katakana += (char) (offset + vowelOffset);
-						state = 7;
-					}
-					break;
-				default:
-					if (prev == ch) {
-						katakana += (char) 0x30c3;
-					} else {
-						katakana += ch;
-						state = 0;
-					}
-					break;
-				}
-				break;
-			case 2:
-				switch (ch) {
-				case 'a':
-					katakana += (char) 0x30e3;
-					break;
-				case 'i':
-					katakana += (char) 0x30a3;
-					break;
-				case 'u':
-					katakana += (char) 0x30e5;
-					break;
-				case 'e':
-					katakana += (char) 0x30a7;
-					break;
-				case 'o':
-					katakana += (char) 0x30e7;
-					break;
-				case 'y':
-					katakana += (char) 0x30b7;
-					state = 7;
-					break;
-				default:
-					katakana += ch;
-					state = 0;
-					break;
-				}
-				break;
-			case 3:
-				switch (ch) {
-				case 'a':
-				case 'i':
-				case 'u':
-				case 'e':
-				case 'o':
-					katakana += (char) 0x30c4;
-					break;
-				default:
-					katakana += ch;
-				}
-				switch (ch) {
-				case 'a':
-					katakana += (char) 0x30a1;
-					break;
-				case 'i':
-					katakana += (char) 0x30a3;
-					break;
-				case 'e':
-					katakana += (char) 0x30a7;
-					break;
-				case 'o':
-					katakana += (char) 0x30a9;
-					break;
-				}
-				state = 0;
-				break;
-			case 4:
-				switch (ch) {
-				case 'n':
-					katakana += (char) 0x30f3;
-					break;
-				case 'a':
-					katakana += (char) 0x30ca;
-					state = 0;
-					break;
-				case 'i':
-					katakana += (char) 0x30cb;
-					state = 0;
-					break;
-				case 'u':
-					katakana += (char) 0x30cc;
-					state = 0;
-					break;
-				case 'e':
-					katakana += (char) 0x30cd;
-					state = 0;
-					break;
-				case 'o':
-					katakana += (char) 0x30ce;
-					state = 0;
-					break;
-				case 'y':
-					katakana += (char) 0x30cb;
-					state = 7;
-					break;
-				default:
-					katakana += (char) 0x30f3;
-					offset = consonantOffset(ch);
+				case 5:
 					switch (ch) {
-					case 'j':
-						state = 5;
-						break;
-					case 'c':
-						state = 6;
-						break;
-					default:
-						state = 1;
-						break;
+						case 'a':
+						case 'i':
+						case 'u':
+						case 'e':
+						case 'o':
+							if (prev == 'j') {
+								katakana += (char) 0x30b8;
+							} else if (prev == 'h') {
+								katakana += (char) 0x30b7;
+							}
+							state = 0;
+							break;
+						case 'j':
+							katakana += (char) 0x30c3;
+							break;
+						case 'y':
+							katakana += (char) 0x30b8;
+							state = 7;
+							break;
+						default:
+							katakana += ch;
+							state = 0;
+					}
+					switch (ch) {
+						case 'a':
+							katakana += (char) 0x30e3;
+							break;
+						case 'u':
+							katakana += (char) 0x30e5;
+							break;
+						case 'e':
+							katakana += (char) 0x30a7;
+							break;
+						case 'o':
+							katakana += (char) 0x30e7;
+							break;
 					}
 					break;
-				}
-				break;
-			case 5:
-				switch (ch) {
-				case 'a':
-				case 'i':
-				case 'u':
-				case 'e':
-				case 'o':
-					if (prev == 'j') {
-						katakana += (char) 0x30b8;
-					} else if (prev == 'h') {
-						katakana += (char) 0x30b7;
+				case 6:
+					switch (ch) {
+						case 'a':
+						case 'i':
+						case 'u':
+						case 'e':
+						case 'o':
+							katakana += (char) 0x30c1;
+							state = 0;
+							break;
+						case 'h':
+							break;
+						case 'c':
+							katakana += (char) 0x30c3;
+							break;
+						case 'y':
+							katakana += (char) 0x30c1;
+							state = 7;
+							break;
+						default:
+							katakana += ch;
+							state = 0;
+					}
+					switch (ch) {
+						case 'a':
+							katakana += (char) 0x30e3;
+							break;
+						case 'u':
+							katakana += (char) 0x30e5;
+							break;
+						case 'e':
+							katakana += (char) 0x30a7;
+							break;
+						case 'o':
+							katakana += (char) 0x30e7;
+							break;
+					}
+					break;
+				case 7:
+					switch (ch) {
+						case 'a':
+							katakana += (char) 0x30e3;
+							break;
+						case 'i':
+							katakana += (char) 0x30a3;
+							break;
+						case 'u':
+							katakana += (char) 0x30e5;
+							break;
+						case 'e':
+							katakana += (char) 0x30a7;
+							break;
+						case 'o':
+							katakana += (char) 0x30e7;
+							break;
+						default:
+							katakana += ch;
+							break;
 					}
 					state = 0;
 					break;
-				case 'j':
-					katakana += (char) 0x30c3;
-					break;
-				case 'y':
-					katakana += (char) 0x30b8;
-					state = 7;
-					break;
-				default:
-					katakana += ch;
-					state = 0;
-				}
-				switch (ch) {
-				case 'a':
-					katakana += (char) 0x30e3;
-					break;
-				case 'u':
-					katakana += (char) 0x30e5;
-					break;
-				case 'e':
-					katakana += (char) 0x30a7;
-					break;
-				case 'o':
-					katakana += (char) 0x30e7;
-					break;
-				}
-				break;
-			case 6:
-				switch (ch) {
-				case 'a':
-				case 'i':
-				case 'u':
-				case 'e':
-				case 'o':
-					katakana += (char) 0x30c1;
-					state = 0;
-					break;
-				case 'h':
-					break;
-				case 'c':
-					katakana += (char) 0x30c3;
-					break;
-				case 'y':
-					katakana += (char) 0x30c1;
-					state = 7;
-					break;
-				default:
-					katakana += ch;
-					state = 0;
-				}
-				switch (ch) {
-				case 'a':
-					katakana += (char) 0x30e3;
-					break;
-				case 'u':
-					katakana += (char) 0x30e5;
-					break;
-				case 'e':
-					katakana += (char) 0x30a7;
-					break;
-				case 'o':
-					katakana += (char) 0x30e7;
-					break;
-				}
-				break;
-			case 7:
-				switch (ch) {
-				case 'a':
-					katakana += (char) 0x30e3;
-					break;
-				case 'i':
-					katakana += (char) 0x30a3;
-					break;
-				case 'u':
-					katakana += (char) 0x30e5;
-					break;
-				case 'e':
-					katakana += (char) 0x30a7;
-					break;
-				case 'o':
-					katakana += (char) 0x30e7;
-					break;
-				default:
-					katakana += ch;
-					break;
-				}
-				state = 0;
-				break;
 			}
 			prev = ch;
 		}
@@ -788,9 +788,9 @@ public class TreeEditor extends JScrollPane implements ActionListener, Printable
 	 * Searches the tree.
 	 * 
 	 * @param n
-	 *            the tree node
+	 *             the tree node
 	 * @param word
-	 *            the search word
+	 *             the search word
 	 */
 	public void search(DefaultMutableTreeNode n, String word) {
 		TreeSelectionModel selectionModel = tree.getSelectionModel();
@@ -986,9 +986,9 @@ public class TreeEditor extends JScrollPane implements ActionListener, Printable
 	 * Collapses the node.
 	 * 
 	 * @param n
-	 *            the node
+	 *              the node
 	 * @param depth
-	 *            the depth
+	 *              the depth
 	 */
 	void collapseNode(DefaultMutableTreeNode n, int depth) {
 		for (Enumeration e = n.postorderEnumeration(); e.hasMoreElements();) {
@@ -1036,73 +1036,73 @@ public class TreeEditor extends JScrollPane implements ActionListener, Printable
 		Object source = e.getSource();
 		int num = ((Integer) comp.get(source)).intValue();
 		switch (num) {
-		case TreeEditorMenu.nFilesOpen:
-			read();
-			break;
-		case TreeEditorMenu.nFilesSave:
-			save();
-			break;
-		case TreeEditorMenu.nFilesSaveAs:
-			saveAs();
-			break;
-		case TreeEditorMenu.nFilesSaveasHTML:
-			saveHTML();
-			break;
-		case TreeEditorMenu.nFilesSaveasXML:
-			saveXML();
-			break;
-		case TreeEditorMenu.nFilesPrintEnglishDocuments:
-			print();
-			break;
-		case TreeEditorMenu.nFilesExit:
-			quit();
-			break;
-		case TreeEditorMenu.nEditUndoDelete:
-			undo();
-			break;
-		case TreeEditorMenu.nEditSearch:
-			search();
-			break;
-		case TreeEditorMenu.nEditAdd:
-			addNode();
-			break;
-		case TreeEditorMenu.nEditAddImage:
-			addImage();
-			break;
-		case TreeEditorMenu.nEditCopy:
-			copyLeaf();
-			break;
-		case TreeEditorMenu.nEditDelete:
-			deleteNode();
-			break;
-		case TreeEditorMenu.nEditSort:
-			sortSelected();
-			break;
-		case TreeEditorMenu.nEditSortAll:
-			sortAll();
-			break;
-		case TreeEditorMenu.nEditApplyAll:
-			applyAll();
-			break;
-		case TreeEditorMenu.nViewCollapseAll:
-			collapseAll();
-			break;
-		case TreeEditorMenu.nViewCollapse:
-			collapseNode();
-			break;
-		case TreeEditorMenu.nViewCollapseNodeatSameLevel:
-			collapseDepth();
-			break;
-		case TreeEditorMenu.nViewExpandAll:
-			expandAll();
-			break;
-		case TreeEditorMenu.nViewRefresh:
-			repaint();
-			break;
-		case TreeEditorMenu.nViewFontSize:
-			break;
-		case TreeEditorMenu.nHelpAboutTreeEditor:
-			break;
+			case TreeEditorMenu.nFilesOpen:
+				read();
+				break;
+			case TreeEditorMenu.nFilesSave:
+				save();
+				break;
+			case TreeEditorMenu.nFilesSaveAs:
+				saveAs();
+				break;
+			case TreeEditorMenu.nFilesSaveasHTML:
+				saveHTML();
+				break;
+			case TreeEditorMenu.nFilesSaveasXML:
+				saveXML();
+				break;
+			case TreeEditorMenu.nFilesPrintEnglishDocuments:
+				print();
+				break;
+			case TreeEditorMenu.nFilesExit:
+				quit();
+				break;
+			case TreeEditorMenu.nEditUndoDelete:
+				undo();
+				break;
+			case TreeEditorMenu.nEditSearch:
+				search();
+				break;
+			case TreeEditorMenu.nEditAdd:
+				addNode();
+				break;
+			case TreeEditorMenu.nEditAddImage:
+				addImage();
+				break;
+			case TreeEditorMenu.nEditCopy:
+				copyLeaf();
+				break;
+			case TreeEditorMenu.nEditDelete:
+				deleteNode();
+				break;
+			case TreeEditorMenu.nEditSort:
+				sortSelected();
+				break;
+			case TreeEditorMenu.nEditSortAll:
+				sortAll();
+				break;
+			case TreeEditorMenu.nEditApplyAll:
+				applyAll();
+				break;
+			case TreeEditorMenu.nViewCollapseAll:
+				collapseAll();
+				break;
+			case TreeEditorMenu.nViewCollapse:
+				collapseNode();
+				break;
+			case TreeEditorMenu.nViewCollapseNodeatSameLevel:
+				collapseDepth();
+				break;
+			case TreeEditorMenu.nViewExpandAll:
+				expandAll();
+				break;
+			case TreeEditorMenu.nViewRefresh:
+				repaint();
+				break;
+			case TreeEditorMenu.nViewFontSize:
+				break;
+			case TreeEditorMenu.nHelpAboutTreeEditor:
+				break;
 		}
 	}
 
@@ -1186,7 +1186,7 @@ public class TreeEditor extends JScrollPane implements ActionListener, Printable
 	 * For internal use only.
 	 * 
 	 * @param n
-	 *            the node
+	 *          the node
 	 */
 	void applyNode(DefaultMutableTreeNode n) {
 		for (Enumeration e = n.postorderEnumeration(); e.hasMoreElements();) {
@@ -1273,7 +1273,7 @@ public class TreeEditor extends JScrollPane implements ActionListener, Printable
 	 * Reads the TRE file.
 	 * 
 	 * @param fileName
-	 *            the TRE file
+	 *                 the TRE file
 	 */
 	public void readTreeFile(String fileName) {
 		readTree(top, fileName);
@@ -1289,7 +1289,7 @@ public class TreeEditor extends JScrollPane implements ActionListener, Printable
 	 * Reads the specified file.
 	 * 
 	 * @param fileName
-	 *            the file
+	 *                 the file
 	 * @return the contents of the file
 	 */
 	public String readFile(String fileName) {
@@ -1321,9 +1321,9 @@ public class TreeEditor extends JScrollPane implements ActionListener, Printable
 	 * Reads the specified TRE file.
 	 * 
 	 * @param top
-	 *            the top node
+	 *                 the top node
 	 * @param fileName
-	 *            the TRE file
+	 *                 the TRE file
 	 */
 	public void readTree(DefaultMutableTreeNode top, String fileName) {
 		StringBuffer buffer = new StringBuffer();
@@ -1415,13 +1415,13 @@ public class TreeEditor extends JScrollPane implements ActionListener, Printable
 	 * Gets the String representations of the tree.
 	 * 
 	 * @param top
-	 *            the top node
+	 *                the top node
 	 * @param level
-	 *            the level
+	 *                the level
 	 * @param start
-	 *            the char
+	 *                the char
 	 * @param endline
-	 *            the new line char
+	 *                the new line char
 	 * @return the String representations of the tree.
 	 */
 	private String parseTree() {
@@ -1432,13 +1432,13 @@ public class TreeEditor extends JScrollPane implements ActionListener, Printable
 	 * Parses the tree.
 	 * 
 	 * @param top
-	 *            the top node
+	 *                the top node
 	 * @param level
-	 *            the level
+	 *                the level
 	 * @param start
-	 *            the char
+	 *                the char
 	 * @param endline
-	 *            the new line char
+	 *                the new line char
 	 * @return the String representations of the tree.
 	 */
 	private String parseTree(DefaultMutableTreeNode top, int level, String start, String endline) {
@@ -1468,9 +1468,9 @@ public class TreeEditor extends JScrollPane implements ActionListener, Printable
 	 * Parses the tree.
 	 * 
 	 * @param top
-	 *            the top node of the tree
+	 *              the top node of the tree
 	 * @param level
-	 *            the level
+	 *              the level
 	 * @return the HTML string that represents the tree
 	 */
 	private String parseTreeHTML(DefaultMutableTreeNode top, int level) {
@@ -1497,9 +1497,9 @@ public class TreeEditor extends JScrollPane implements ActionListener, Printable
 	 * Parses the tree.
 	 * 
 	 * @param top
-	 *            the top node
+	 *              the top node
 	 * @param level
-	 *            the level
+	 *              the level
 	 * @return the String representations of the tree.
 	 */
 	public String parseTreeXML(DefaultMutableTreeNode top, int level) {
@@ -1574,13 +1574,13 @@ public class TreeEditor extends JScrollPane implements ActionListener, Printable
 	 * Writes out the tree in TRE format.
 	 * 
 	 * @param top
-	 *            the top node
+	 *                 the top node
 	 * @param fileName
-	 *            the file
+	 *                 the file
 	 * @param start
-	 *            the char
+	 *                 the char
 	 * @param endline
-	 *            the new line char
+	 *                 the new line char
 	 */
 	public void writeTree(DefaultMutableTreeNode top, String fileName, String start, String endline) {
 		try {
@@ -1594,9 +1594,9 @@ public class TreeEditor extends JScrollPane implements ActionListener, Printable
 	 * Writes out the tree in HTML format.
 	 * 
 	 * @param top
-	 *            the top node of the tree
+	 *                 the top node of the tree
 	 * @param fileName
-	 *            the file
+	 *                 the file
 	 */
 	public void writeTreeHTML(DefaultMutableTreeNode top, String fileName) {
 		String buffer;
@@ -1614,9 +1614,9 @@ public class TreeEditor extends JScrollPane implements ActionListener, Printable
 	 * Writes out the tree in XML format.
 	 * 
 	 * @param top
-	 *            the top node
+	 *                 the top node
 	 * @param fileName
-	 *            the file
+	 *                 the file
 	 */
 	public void writeTreeXML(DefaultMutableTreeNode top, String fileName) {
 		String buffer;
@@ -1633,11 +1633,11 @@ public class TreeEditor extends JScrollPane implements ActionListener, Printable
 	 * Writes out the text.
 	 * 
 	 * @param str
-	 *            the text
+	 *                 the text
 	 * @param fileName
-	 *            the file
+	 *                 the file
 	 * @throws Exception
-	 *             exception
+	 *                   exception
 	 */
 	public void writeFile(String str, String fileName) throws Exception {
 		log.info("Saving the tree: " + fileName);
@@ -1667,13 +1667,13 @@ public class TreeEditor extends JScrollPane implements ActionListener, Printable
 	 * Parses the tree.
 	 * 
 	 * @param top
-	 *            the top node
+	 *              the top node
 	 * @param level
-	 *            the level
+	 *              the level
 	 * @param g
-	 *            Graphics
+	 *              Graphics
 	 * @param h
-	 *            the height
+	 *              the height
 	 * @return the height
 	 */
 	private int parsePrintTree(DefaultMutableTreeNode top, int level, Graphics g, int h) {
@@ -1729,11 +1729,11 @@ public class TreeEditor extends JScrollPane implements ActionListener, Printable
 	 * Prints out the tree.
 	 * 
 	 * @param top
-	 *            the top node
+	 *              the top node
 	 * @param level
-	 *            the level
+	 *              the level
 	 * @param g
-	 *            the Graphics object
+	 *              the Graphics object
 	 */
 	public void printTree(DefaultMutableTreeNode top, int level, Graphics g) {
 		if (top == null)
@@ -1791,14 +1791,14 @@ public class TreeEditor extends JScrollPane implements ActionListener, Printable
 	 * The program entry point.
 	 * 
 	 * @param args
-	 *            the command line arguments
+	 *             the command line arguments
 	 */
 	public static void main(String args[]) {
 		final String OPTION_FILE = "trefile";
 		final String OPTION_USAGE = "usage";
 		Options opt = new Options();
-		opt.addOption("f", OPTION_FILE, true, "the TRE file");
-		opt.addOption("?", OPTION_USAGE, false, "print this message");
+		opt.addOption("f", OPTION_FILE, true, "The TRE file");
+		opt.addOption("?", OPTION_USAGE, false, "Print this message");
 
 		try {
 			String treFile = "";
